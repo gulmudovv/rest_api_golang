@@ -18,6 +18,7 @@ type Storage interface {
 	Get(id int) (Employee, error)
 	Update(id int, e Employee)
 	Delete(id int)
+	GetAll() []Employee
 }
 
 type MemoryStorage struct {
@@ -44,6 +45,17 @@ func (s *MemoryStorage) Insert(e *Employee) {
 }
 
 func (s *MemoryStorage) Get(id int) (Employee, error) {
+	s.Lock()
+	defer s.Unlock()
+
+	employee, ok := s.data[id]
+	if !ok {
+		return employee, errors.New("the employee not found")
+	}
+	return employee, nil
+}
+
+func (s *MemoryStorage) GetAll() []Employee {
 	s.Lock()
 	defer s.Unlock()
 

@@ -37,6 +37,7 @@ func (h *Handler) CreateEmployee(c *gin.Context) {
 	})
 }
 func (h *Handler) GetEmployee(c *gin.Context) {
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		fmt.Printf("failed to convert id param to int: %s\n", err.Error())
@@ -45,6 +46,7 @@ func (h *Handler) GetEmployee(c *gin.Context) {
 		})
 		return
 	}
+
 	employee, err := h.storage.Get(id)
 	if err != nil {
 		fmt.Printf("failed to get employee: %s\n", err.Error())
@@ -54,4 +56,89 @@ func (h *Handler) GetEmployee(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, employee)
+}
+
+func (h *Handler) UpdateEmployee(c *gin.Context) {
+	var employee Employee
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		fmt.Printf("failed to convert id param to int: %s\n", err.Error())
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+	if err := c.BindJSON(&employee); err != nil {
+		fmt.Printf("failed to update the employee: %s\n", err.Error())
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+	h.storage.Update(id, employee)
+	c.JSON(http.StatusOK, map[string]int{
+		"id": id,
+	})
+}
+
+func (h *Handler) DeleteEmployee(c *gin.Context) {
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		fmt.Printf("failed to convert id param to int: %s\n", err.Error())
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	h.storage.Delete(id)
+	c.JSON(http.StatusOK, map[string]int{
+		"id": id,
+	})
+}
+
+func (h *Handler) GetEmployee(c *gin.Context) {
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		fmt.Printf("failed to convert id param to int: %s\n", err.Error())
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+
+	employee, err := h.storage.Get(id)
+	if err != nil {
+		fmt.Printf("failed to get employee: %s\n", err.Error())
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, employee)
+}
+
+func (h *Handler) GetAllEmployees(c *gin.Context) {
+	var employee Employee
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		fmt.Printf("failed to convert id param to int: %s\n", err.Error())
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+	if err := c.BindJSON(&employee); err != nil {
+		fmt.Printf("failed to update the employee: %s\n", err.Error())
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+	h.storage.Update(id, employee)
+	c.JSON(http.StatusOK, map[string]int{
+		"id": id,
+	})
 }
