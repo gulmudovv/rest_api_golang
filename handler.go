@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"net/http"
-	_ "strconv"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type ErrorRResponse struct {
+type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
@@ -26,7 +26,7 @@ func (h *Handler) CreateEmployee(c *gin.Context) {
 
 	if err := c.BindJSON(&employee); err != nil {
 		fmt.Printf("failed to bind employee: %s\n", err.Error())
-		c.JSON(http.StatusBadRequest, ErrorRResponse{
+		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Message: err.Error(),
 		})
 		return
@@ -35,4 +35,23 @@ func (h *Handler) CreateEmployee(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]int{
 		"id": employee.Id,
 	})
+}
+func (h *Handler) GetEmployee(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		fmt.Printf("failed to convert id param to int: %s\n", err.Error())
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+	employee, err := h.storage.Get(id)
+	if err != nil {
+		fmt.Printf("failed to get employee: %s\n", err.Error())
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Message: err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, employee)
 }
