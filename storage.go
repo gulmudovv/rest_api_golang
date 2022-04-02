@@ -58,12 +58,14 @@ func (s *MemoryStorage) Get(id int) (Employee, error) {
 func (s *MemoryStorage) GetAll() []Employee {
 	s.Lock()
 	defer s.Unlock()
+	employees := []Employee{}
+	for _, e := range s.data {
+		employees = append(employees, e)
 
-	employee, ok := s.data[id]
-	if !ok {
-		return employee, errors.New("the employee not found")
 	}
-	return employee, nil
+
+	return employees
+
 }
 
 func (s *MemoryStorage) Update(id int, e Employee) {
